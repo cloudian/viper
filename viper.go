@@ -792,7 +792,7 @@ func Get(key string) interface{} { return v.Get(key) }
 
 func (v *Viper) Get(key string) interface{} {
 	casedKey := v.caseKey(key)
-	val := v.find(casedKey)
+	val := v.find(casedKey, true)
 	if val == nil {
 		return nil
 	}
@@ -1095,7 +1095,7 @@ func (v *Viper) BindEnv(input ...string) error {
 		return fmt.Errorf("missing key to bind to")
 	}
 
-	key = v.caseKey(input[0])
+	key := v.caseKey(input[0])
 
 	if len(input) == 1 {
 		v.env[key] = append(v.env[key], v.mergeWithEnvPrefix(key))
@@ -1183,7 +1183,7 @@ func (v *Viper) find(key string, flagDefault bool) interface{} {
 			return nil
 		}
 	}
-	envkey, exists := v.env[key]
+	envkeys, exists := v.env[key]
 	if exists {
 		for _, envkey := range envkeys {
 			if val, ok := v.getEnv(envkey); ok {
@@ -1293,7 +1293,7 @@ func IsSet(key string) bool { return v.IsSet(key) }
 
 func (v *Viper) IsSet(key string) bool {
 	casedKey := v.caseKey(key)
-	val := v.find(casedKey)
+	val := v.find(casedKey, true)
 	return val != nil
 }
 
